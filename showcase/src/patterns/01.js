@@ -156,11 +156,11 @@ const MediumClap = ({ animationTimeline }) => {
 Smaller Component used by <MediumClap />
 ==================================== **/
 
-export const ClapIcon = ({ isClicked }) => {
+export const ClapIcon = ({ isClicked, id }) => {
   return (
     <span>
       <svg
-        id="clapIcon"
+        id={id || 'clapIcon'}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="-549 338 100.1 125"
         className={`${styles.icon} ${isClicked && styles.checked}`}
@@ -171,16 +171,16 @@ export const ClapIcon = ({ isClicked }) => {
     </span>
   )
 }
-export const ClapCount = ({ count }) => {
+export const ClapCount = ({ count, id }) => {
   return (
-    <span id="clapCount" className={styles.count}>
+    <span id={id || 'clapCount'} className={styles.count}>
       +{count}
     </span>
   )
 }
-export const CountTotal = ({ countTotal }) => {
+export const CountTotal = ({ countTotal, id }) => {
   return (
-    <span id="clapCountTotal" className={styles.total}>
+    <span id={id || 'clapCountTotal'} className={styles.total}>
       {countTotal}
     </span>
   )
