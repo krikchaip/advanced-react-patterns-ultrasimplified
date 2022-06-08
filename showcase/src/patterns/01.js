@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, forwardRef } from 'react'
 import mojs from 'mo-js'
 
 import { generateRandomNumber } from '../utils/generateRandomNumber'
@@ -156,11 +156,12 @@ const MediumClap = ({ animationTimeline }) => {
 Smaller Component used by <MediumClap />
 ==================================== **/
 
-export const ClapIcon = ({ isClicked, id }) => {
+export const ClapIcon = forwardRef(({ isClicked, id }, ref) => {
   return (
     <span>
       <svg
         id={id || 'clapIcon'}
+        ref={ref}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="-549 338 100.1 125"
         className={`${styles.icon} ${isClicked && styles.checked}`}
@@ -170,21 +171,21 @@ export const ClapIcon = ({ isClicked, id }) => {
       </svg>
     </span>
   )
-}
-export const ClapCount = ({ count, id }) => {
+})
+export const ClapCount = forwardRef(({ count, id }, ref) => {
   return (
-    <span id={id || 'clapCount'} className={styles.count}>
+    <span id={id || 'clapCount'} ref={ref} className={styles.count}>
       +{count}
     </span>
   )
-}
-export const CountTotal = ({ countTotal, id }) => {
+})
+export const CountTotal = forwardRef(({ countTotal, id }, ref) => {
   return (
-    <span id={id || 'clapCountTotal'} className={styles.total}>
+    <span id={id || 'clapCountTotal'} ref={ref} className={styles.total}>
       {countTotal}
     </span>
   )
-}
+})
 
 /** ====================================
     *        🔰USAGE

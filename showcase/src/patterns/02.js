@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useLayoutEffect, useMemo, useCallback } from 'react'
 import mojs from 'mo-js'
 
 import styles from './index.css'
@@ -13,19 +13,17 @@ import {
 const TL_DURATION = 300
 
 export const useClapAnimation = options => {
-  const {
-    parentId = '#clap',
-    countId = '#clapCount',
-    totalId = '#clapTotalCount'
-  } = options || {}
+  const { parentRef, countRef, totalRef } = options || {}
 
   const [animationTimeline, setAnimationTimeLine] = useState(
     () => new mojs.Timeline()
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (![parentRef, countRef, totalRef].every(Boolean)) return
+
     const triangleBurst = new mojs.Burst({
-      parent: parentId,
+      parent: parentRef,
       radius: { 50: 95 },
       count: 5,
       angle: 30,
@@ -44,7 +42,7 @@ export const useClapAnimation = options => {
     })
 
     const circleBurst = new mojs.Burst({
-      parent: parentId,
+      parent: parentRef,
       radius: { 50: 75 },
       angle: 25,
       duration: TL_DURATION,
@@ -59,7 +57,7 @@ export const useClapAnimation = options => {
     })
 
     const countAnimation = new mojs.Html({
-      el: countId,
+      el: countRef,
       isShowStart: false,
       isShowEnd: true,
       y: { 0: -30 },
@@ -72,7 +70,7 @@ export const useClapAnimation = options => {
     })
 
     const countTotalAnimation = new mojs.Html({
-      el: totalId,
+      el: totalRef,
       isShowStart: false,
       isShowEnd: true,
       opacity: { 0: 1 },
@@ -82,14 +80,13 @@ export const useClapAnimation = options => {
     })
 
     const scaleButton = new mojs.Html({
-      el: parentId,
+      el: parentRef,
       duration: TL_DURATION,
       scale: { 1.3: 1 },
       easing: mojs.easing.out
     })
 
-    const clap = document.querySelector(parentId)
-    clap.style.transform = 'scale(1, 1)'
+    parentRef.style.transform = 'scale(1, 1)'
 
     const newAnimationTimeline = animationTimeline.add([
       countAnimation,
@@ -100,17 +97,29 @@ export const useClapAnimation = options => {
     ])
 
     setAnimationTimeLine(newAnimationTimeline)
-  }, [])
+  }, [parentRef, countRef, totalRef])
 
   return useMemo(() => ({ animationTimeline }), [animationTimeline])
 }
 
+export function useCallbackRef(initialRef) {
+  const [ref, setRef] = useState(initialRef)
+  const callbackRef = useCallback(el => void setRef(el), [setRef])
+
+  return useMemo(() => [ref, callbackRef], [ref, callbackRef])
+}
+
 const Usage = () => {
   const [clapState, setClapState] = useState(initialState)
+
+  const [parentRef, parentCbRef] = useCallbackRef(null)
+  const [countRef, countCbRef] = useCallbackRef(null)
+  const [totalRef, totalCbRef] = useCallbackRef(null)
+
   const { animationTimeline } = useClapAnimation({
-    parentId: '#clap02',
-    countId: '#clapCount02',
-    totalId: '#clapCountTotal02'
+    parentRef,
+    countRef,
+    totalRef
   })
 
   const handleClapClick = () => {
@@ -126,10 +135,10 @@ const Usage = () => {
   }
 
   return (
-    <button id="clap02" className={styles.clap} onClick={handleClapClick}>
-      <ClapIcon id="clapIcon02" isClicked={clapState.isClicked} />
-      <ClapCount id="clapCount02" count={clapState.count} />
-      <CountTotal id="clapCountTotal02" countTotal={clapState.countTotal} />
+    <button ref={parentCbRef} className={styles.clap} onClick={handleClapClick}>
+      <ClapIcon isClicked={clapState.isClicked} />
+      <ClapCount ref={countCbRef} count={clapState.count} />
+      <CountTotal ref={totalCbRef} countTotal={clapState.countTotal} />
     </button>
   )
 }
