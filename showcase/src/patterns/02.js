@@ -106,20 +106,27 @@ export function useCallbackRef(initialRef) {
   const [ref, setRef] = useState(initialRef)
   const callbackRef = useCallback(el => void setRef(el), [setRef])
 
-  return useMemo(() => [ref, callbackRef], [ref, callbackRef])
+  callbackRef.current = ref
+
+  return callbackRef
 }
 
+/** ====================================
+    *        🔰USAGE
+    Below's how a potential user
+    may consume the component API
+==================================== **/
 const Usage = () => {
   const [clapState, setClapState] = useState(initialState)
 
-  const [parentRef, parentCbRef] = useCallbackRef(null)
-  const [countRef, countCbRef] = useCallbackRef(null)
-  const [totalRef, totalCbRef] = useCallbackRef(null)
+  const parentRef = useCallbackRef(null)
+  const countRef = useCallbackRef(null)
+  const totalRef = useCallbackRef(null)
 
   const { animationTimeline } = useClapAnimation({
-    parentRef,
-    countRef,
-    totalRef
+    parentRef: parentRef.current,
+    countRef: countRef.current,
+    totalRef: totalRef.current
   })
 
   const handleClapClick = () => {
@@ -135,10 +142,10 @@ const Usage = () => {
   }
 
   return (
-    <button ref={parentCbRef} className={styles.clap} onClick={handleClapClick}>
+    <button ref={parentRef} className={styles.clap} onClick={handleClapClick}>
       <ClapIcon isClicked={clapState.isClicked} />
-      <ClapCount ref={countCbRef} count={clapState.count} />
-      <CountTotal ref={totalCbRef} countTotal={clapState.countTotal} />
+      <ClapCount ref={countRef} count={clapState.count} />
+      <CountTotal ref={totalRef} countTotal={clapState.countTotal} />
     </button>
   )
 }
