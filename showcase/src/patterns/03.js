@@ -1,4 +1,11 @@
-import React, { createContext, useState, useContext, useMemo } from 'react'
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useMemo,
+  useRef,
+  useEffect
+} from 'react'
 
 import styles from './index.css'
 import {
@@ -12,7 +19,7 @@ import { useCallbackRef, useClapAnimation } from './02'
 
 const ClapAnimationContext = createContext()
 
-const MediumClap = ({ children }) => {
+const MediumClap = ({ children, onClap }) => {
   const [clapState, setClapState] = useState(initialState)
 
   const parentRef = useCallbackRef(null)
@@ -24,6 +31,11 @@ const MediumClap = ({ children }) => {
     countRef: countRef.current,
     totalRef: totalRef.current
   })
+
+  // 👉🏻 notify subscribers of `clapState`
+  useAfterMountEffect(() => {
+    onClap && onClap(clapState)
+  }, [clapState.count])
 
   const handleClapClick = () => {
     // 👉🏻 props from custom hook
@@ -68,18 +80,34 @@ const CountTotal = () => {
   return <BaseCountTotal ref={totalRef} countTotal={clapState.countTotal} />
 }
 
+export const useAfterMountEffect = (cb, deps) => {
+  const mounted = useRef(true)
+  return useEffect(() => {
+    if (mounted.current) {
+      return void (mounted.current = false)
+    }
+
+    return cb()
+  }, deps)
+}
+
 /** ====================================
     *        🔰USAGE
     Below's how a potential user
     may consume the component API
 ==================================== **/
 const Usage = () => {
+  const [count, setCount] = useState(0)
+  const handleClap = clapState => setCount(clapState.count)
   return (
-    <MediumClap>
-      <ClapIcon />
-      <ClapCount />
-      <CountTotal />
-    </MediumClap>
+    <div style={{ width: '100%' }}>
+      <MediumClap onClap={handleClap}>
+        <ClapIcon />
+        <ClapCount />
+        <CountTotal />
+      </MediumClap>
+      <div style={{ marginTop: '1rem' }}>You have clapped {count}.</div>
+    </div>
   )
 }
 
