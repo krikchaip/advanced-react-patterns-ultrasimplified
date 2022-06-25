@@ -19,7 +19,7 @@ import { useCallbackRef, useClapAnimation } from './02'
 
 const ClapAnimationContext = createContext()
 
-const MediumClap = ({ children, onClap }) => {
+export const MediumClap = ({ children, onClap, style, className }) => {
   const [clapState, setClapState] = useState(initialState)
 
   const parentRef = useCallbackRef(null)
@@ -60,24 +60,49 @@ const MediumClap = ({ children, onClap }) => {
 
   return (
     <ClapAnimationContext.Provider value={value}>
-      <button ref={parentRef} className={styles.clap} onClick={handleClapClick}>
+      <button
+        ref={parentRef}
+        className={[styles.clap, className].join(' ')}
+        onClick={handleClapClick}
+        style={style}
+      >
         {children}
       </button>
     </ClapAnimationContext.Provider>
   )
 }
 
-const ClapIcon = () => {
+export const ClapIcon = ({ style, className }) => {
   const { clapState } = useContext(ClapAnimationContext)
-  return <BaseClapIcon isClicked={clapState.isClicked} />
+  return (
+    <BaseClapIcon
+      isClicked={clapState.isClicked}
+      className={className}
+      style={style}
+    />
+  )
 }
-const ClapCount = () => {
+export const ClapCount = ({ style, className }) => {
   const { countRef, clapState } = useContext(ClapAnimationContext)
-  return <BaseClapCount ref={countRef} count={clapState.count} />
+  return (
+    <BaseClapCount
+      ref={countRef}
+      count={clapState.count}
+      className={className}
+      style={style}
+    />
+  )
 }
-const CountTotal = () => {
+export const CountTotal = ({ style, className }) => {
   const { totalRef, clapState } = useContext(ClapAnimationContext)
-  return <BaseCountTotal ref={totalRef} countTotal={clapState.countTotal} />
+  return (
+    <BaseCountTotal
+      ref={totalRef}
+      countTotal={clapState.countTotal}
+      style={style}
+      className={className}
+    />
+  )
 }
 
 export const useAfterMountEffect = (cb, deps) => {
