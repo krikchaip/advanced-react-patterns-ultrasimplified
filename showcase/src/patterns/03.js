@@ -17,7 +17,7 @@ import {
 } from './01'
 import { useCallbackRef, useClapAnimation } from './02'
 
-const ClapAnimationContext = createContext()
+export const ClapAnimationContext = createContext()
 
 export const MediumClap = ({ children, onClap, style, className }) => {
   const [clapState, setClapState] = useState(initialState)
