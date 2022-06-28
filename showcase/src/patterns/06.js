@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 import styles from './index.css'
 import {
-  initialState,
+  initialState as INITIAL_STATE,
   ClapIcon,
   ClapCount,
   CountTotal,
@@ -11,11 +11,11 @@ import {
 import { useCallbackRef, useClapAnimation } from './02'
 import { useAfterMountEffect } from './03'
 
-export const useClapState = () => {
-  const [clapState, setClapState] = useState(initialState)
+export const useClapState = (initialState = INITIAL_STATE) => {
+  const [clapState, _setClapState] = useState(initialState)
   const incrementCount = useCallback(
     () =>
-      setClapState(prev => ({
+      _setClapState(prev => ({
         count: Math.min(prev.count + 1, MAXIMUM_USER_CLAP),
         countTotal:
           prev.count < MAXIMUM_USER_CLAP
@@ -23,12 +23,12 @@ export const useClapState = () => {
             : prev.countTotal,
         isClicked: true
       })),
-    [setClapState]
+    [_setClapState]
   )
 
   return useMemo(
-    () => ({ clapState, incrementCount }),
-    [clapState, incrementCount]
+    () => ({ clapState, incrementCount, _setClapState }),
+    [clapState, incrementCount, _setClapState]
   )
 }
 
