@@ -9,7 +9,7 @@ import { useAfterMountEffect } from './03'
 import { useClapState as _useClapState } from './06'
 
 // 👉🏻 user-defined initial state for `useClapState`
-const initialState = {
+export const initialState = {
   count: 0,
   countTotal: 30,
   isClicked: true
@@ -39,7 +39,7 @@ export const usePrevious = currentValue => {
   return previousValue.current
 }
 
-const useUpload = () => {
+export const useUpload = () => {
   const [isUploading, setIsUploading] = useState(false)
   const previousData = useRef()
 
